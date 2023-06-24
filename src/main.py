@@ -146,7 +146,7 @@ def pep(session):
                            f'Статус в карточке: {status_pep_page}\n'
                            f'Ожидаемые статусы: '
                            f'{EXPECTED_STATUS[preview_status]}')
-    
+
     results.extend(status_sum, 'Total', total_peps)
     return results
 
