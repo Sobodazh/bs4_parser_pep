@@ -139,22 +139,15 @@ def pep(session):
         status_pep_page = table_info.find(
             string='Status').parent.find_next_sibling('dd').string
 
-        if status_pep_page in status_sum:
-            status_sum[status_pep_page] += 1
-        if status_pep_page not in status_sum:
-            status_sum[status_pep_page] = 1
+        status_sum[status_pep_page] = status_sum.get(status_pep_page, 0) + 1
         if status_pep_page not in EXPECTED_STATUS[preview_status]:
-            error_message = (f'Несовпадающие статусы:\n'
-                             f'{url}\n'
-                             f'Статус в карточке: {status_pep_page}\n'
-                             f'Ожидаемые статусы: '
-                             f'{EXPECTED_STATUS[preview_status]}')
-            logging.warning(error_message)
-
-    for status in status_sum:
-        results.append((status, status_sum[status]))
-    results.append(('Total', total_peps))
-
+            raise KeyError(f'Несовпадающие статусы:\n'
+                           f'{url}\n'
+                           f'Статус в карточке: {status_pep_page}\n'
+                           f'Ожидаемые статусы: '
+                           f'{EXPECTED_STATUS[preview_status]}')
+    
+    results.extend(status_sum, 'Total', total_peps)
     return results
 
 
