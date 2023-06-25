@@ -140,14 +140,17 @@ def pep(session):
             string='Status').parent.find_next_sibling('dd').string
 
         status_sum[status_pep_page] = status_sum.get(status_pep_page, 0) + 1
-        if status_pep_page not in EXPECTED_STATUS[preview_status]:
-            raise KeyError(f'Несовпадающие статусы:\n'
-                           f'{url}\n'
-                           f'Статус в карточке: {status_pep_page}\n'
-                           f'Ожидаемые статусы: '
-                           f'{EXPECTED_STATUS[preview_status]}')
+        if status_pep_page not in EXPECTED_STATUS.get(preview_status,
+                                                      'Неверный ключ'):
+            error_message = (f'Несовпадающие статусы:\n'
+                             f'{url}\n'
+                             f'Статус в карточке: {status_pep_page}\n'
+                             f'Ожидаемые статусы: '
+                             f'{EXPECTED_STATUS[preview_status]}')
+            logging.warning(error_message)
 
-    results.extend(status_sum, 'Total', total_peps)
+    results.extend([(status, status_sum[status]) for status in status_sum])
+    results.append(('Total', total_peps))
     return results
 
 
